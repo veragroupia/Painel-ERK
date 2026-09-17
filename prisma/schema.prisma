@@ -1,0 +1,367 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  cpf          String?
+  role         String   @default("cliente") // cliente | admin
+  createdAt    DateTime @default(now())
+
+  address   Address?
+  favorites Favorite[]
+  cartItems CartItem[]
+  orders    Order[]
+  measurements Measurement?
+}
+
+model Address {
+  id        String @id @default(cuid())
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  street    String
+  number    String?
+  district  String?
+  city      String
+  state     String
+  zip       String
+  preference String @default("motoboy")
+}
+
+model Measurement {
+  id         String @id @default(cuid())
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  anelAro    Int?
+  correnteCm Int?
+  pulseiraCm Int?
+  paymentPref String @default("pix")
+  cardLast4   String?
+}
+
+model Category {
+  id       String    @id
+  name     String
+  iconName String
+  photoId  Int
+  products Product[]
+}
+
+model Product {
+  id            String   @id
+  name          String
+  spec          String
+  description   String   @default("")
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
+  price         Float
+  oldPrice      Float?
+  photoId       Int
+  tags          String   @default("[]")
+  stock         Int      @default(0)
+  status        String   @default("published") // published | draft | soldout
+  displayOrder  Int      @default(0)
+
+  // custo e preço
+  costSilverGrams Float @default(0)
+  costLaborHours  Float @default(0)
+  costLaborValue  Float @default(0)
+  costPackaging   Float @default(0)
+  costThirdParty  Float @default(0)
+
+  // mídia / 3D
+  model3dUrl      String?
+  model3dStatus   String @default("none") // none | pending | approved | discarded
+  turntableStatus String @default("none") // none | uploading | ready
+
+  // ficha do montador (também usada como parâmetros do configurador)
+  buildTipo     String
+  buildElo      String?
+  buildEsp      Float
+  buildMedida   Int?
+  buildAcabamento String?
+  buildPingente String?
+  buildSinete   Boolean  @default(false)
+  buildGravacao String?
+
+  favorites     Favorite[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  photos        ProductPhoto[]
+  supplyUsages  ProductSupplyUsage[]
+  comboItems    ComboItem[]
+  highlights    HighlightSchedule[]
+}
+
+model ProductPhoto {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  kind      String  @default("gallery") // gallery | turntable
+  order     Int     @default(0)
+  isCover   Boolean @default(false)
+}
+
+model ProductSupplyUsage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplyId  String
+  supply    Supply  @relation(fields: [supplyId], references: [id])
+  quantity  Float
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guestToken String?
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([guestToken])
+}
+
+model CartItem {
+  id          String   @id @default(cuid())
+  cartToken   String
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity    Int      @default(1)
+  customName  String?
+  customSpec  String?
+  customPrice Float?
+  customSpecJson String?
+  createdAt   DateTime @default(now())
+
+  @@index([cartToken])
+}
+
+model Order {
+  id           Int         @id @default(autoincrement())
+  userId       String?
+  user         User?       @relation(fields: [userId], references: [id])
+  status       String      @default("novo") // novo|pago|producao|polimento|embalado|enviado|entregue|cancelado
+  readyFromStock Boolean   @default(false)  // peça pronta de estoque: pula produção/polimento na linha do tempo
+  customerName String
+  customerPhone String
+  customerCpf  String?
+  zip          String
+  addressNumber String?
+  delivery     String
+  whereIsIt    String      @default("")
+  payment      String
+  paymentStatus String     @default("pendente") // pendente|pago|estornado
+  paymentFeeAmount Float   @default(0)
+  paymentConfirmedAt DateTime?
+  subtotal     Float
+  discount     Float       @default(0)
+  shipping     Float       @default(0)
+  total        Float
+  canceledAt   DateTime?
+  createdAt    DateTime    @default(now())
+
+  items        OrderItem[]
+  statusEvents OrderStatusEvent[]
+  notes        OrderNote[]
+  cost         OrderCost?
+}
+
+model OrderStatusEvent {
+  id      String   @id @default(cuid())
+  orderId Int
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status  String
+  at      DateTime @default(now())
+  by      String   @default("Dono")
+
+  @@index([orderId])
+}
+
+model OrderNote {
+  id        String   @id @default(cuid())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  text      String
+  author    String   @default("Dono")
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model OrderCost {
+  id                 String @id @default(cuid())
+  orderId            Int    @unique
+  order              Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  silverGrams        Float  @default(0)
+  silverPricePerGram Float  @default(0)
+  laborCost          Float  @default(0)
+  polishGrams        Float  @default(0)
+  polishCost         Float  @default(0)
+  packagingCost      Float  @default(0)
+  clampCost          Float  @default(0)
+  thirdPartyCost     Float  @default(0)
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     Int
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  name        String
+  spec        String
+  quantity    Int
+  unitPrice   Float
+  oldUnitPrice Float?
+  buildJson   String?  // snapshot da ficha do montador p/ peça sob encomenda
+}
+
+model Supply {
+  id                String   @id @default(cuid())
+  name              String
+  type              String   // massa_polir|flanela|liquido_limpeza|escova|caixinha|saquinho|cartao|outro
+  unit              String   // g|ml|unidade
+  stockQty          Float    @default(0)
+  unitCost          Float    @default(0)
+  lowStockThreshold Float    @default(0)
+
+  purchases     SupplyPurchase[]
+  consumptions  SupplyConsumption[]
+  productUsages ProductSupplyUsage[]
+}
+
+model SupplyPurchase {
+  id        String   @id @default(cuid())
+  supplyId  String
+  supply    Supply   @relation(fields: [supplyId], references: [id], onDelete: Cascade)
+  supplier  String
+  quantity  Float
+  totalPaid Float
+  date      DateTime @default(now())
+}
+
+model SupplyConsumption {
+  id          String   @id @default(cuid())
+  supplyId    String
+  supply      Supply   @relation(fields: [supplyId], references: [id], onDelete: Cascade)
+  quantity    Float
+  productId   String?
+  productName String?
+  orderId     Int?
+  note        String?
+  date        DateTime @default(now())
+}
+
+model Combo {
+  id            String    @id @default(cuid())
+  name          String
+  priceOverride Float
+  active        Boolean   @default(true)
+  startAt       DateTime?
+  endAt         DateTime?
+  stockLimit    Int?
+  createdAt     DateTime  @default(now())
+
+  items      ComboItem[]
+  highlights HighlightSchedule[]
+}
+
+model ComboItem {
+  id        String  @id @default(cuid())
+  comboId   String
+  combo     Combo   @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+}
+
+model Offer {
+  id            String    @id @default(cuid())
+  name          String
+  discountType  String    // percent|amount
+  discountValue Float
+  productId     String?
+  categoryId    String?
+  coupon        String?
+  startAt       DateTime?
+  endAt         DateTime?
+  active        Boolean   @default(true)
+  soldCount     Int       @default(0)
+}
+
+model HighlightSchedule {
+  id         String   @id @default(cuid())
+  date       DateTime @unique
+  targetType String   // product|combo
+  productId  String?
+  product    Product? @relation(fields: [productId], references: [id])
+  comboId    String?
+  combo      Combo?   @relation(fields: [comboId], references: [id])
+}
+
+model VitrineSection {
+  id     String  @id
+  order  Int     @default(0)
+  active Boolean @default(true)
+}
+
+model MontadorOption {
+  id           String  @id @default(cuid())
+  step         String  // tipo|elo|espessura|acabamento|pingente
+  name         String
+  description  String  @default("")
+  thumbnailUrl String?
+  active       Boolean @default(true)
+  order        Int     @default(0)
+}
+
+model MontadorWeight {
+  id        String @id @default(cuid())
+  elo       String
+  espessura Float
+  medida    Int
+  grams     Float
+
+  @@unique([elo, espessura, medida])
+}
+
+model SilverPrice {
+  id    String   @id @default(cuid())
+  value Float
+  at    DateTime @default(now())
+  by    String   @default("Dono")
+}
+
+model FixedExpense {
+  id         String  @id @default(cuid())
+  name       String
+  amount     Float
+  dayOfMonth Int
+  active     Boolean @default(true)
+}
+
+model Settings {
+  id                 String @id @default("shop")
+  storeName          String @default("ERK Pratas")
+  hoursJson          String @default("[]")
+  deliveryZonesJson  String @default("[]")
+  paymentMethodsJson String @default("[]")
+  laborRatePerHour   Float  @default(45)
+  laborMultiplier    Float  @default(1)
+  gravacaoSurcharge  Float  @default(15)
+}
