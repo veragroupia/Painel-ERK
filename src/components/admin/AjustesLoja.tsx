@@ -36,7 +36,7 @@ export function AjustesLoja({ nome, horarios }: { nome: string; horarios: { dia:
                 value={l.horario}
                 onChange={(e) => { setLinhas((ls) => ls.map((x, j) => (j === i ? { ...x, horario: e.target.value } : x))); setSalvo(false); }}
               />
-              <button type="button" style={{ background: 'none', border: 0, color: 'var(--tinta-3)', cursor: 'pointer' }} aria-label="Remover horário" onClick={() => setLinhas((ls) => ls.filter((_, j) => j !== i))}>
+              <button type="button" className="adm-icone-btn" aria-label="Remover horário" onClick={() => setLinhas((ls) => ls.filter((_, j) => j !== i))}>
                 <Icon name="adm_lixeira" size={15} />
               </button>
             </div>
