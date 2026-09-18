@@ -27,7 +27,7 @@ export default async function ClienteDetalhePage({ params }: { params: { id: str
 
   return (
     <div className="erk-entra" style={{ display: 'grid', gap: 18 }}>
-      <Link href="/clientes" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--tinta-2)' }}>
+      <Link href="/clientes" className="adm-voltar">
         <Icon name="voltar" size={15} /> Clientes
       </Link>
 
@@ -45,7 +45,7 @@ export default async function ClienteDetalhePage({ params }: { params: { id: str
         ) : null}
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '.8fr 1.2fr', alignItems: 'start' }}>
+      <div className="adm-grid-2" style={{ ...({ '--cols': '.8fr 1.2fr' } as React.CSSProperties), alignItems: 'start' }}>
         <div style={{ display: 'grid', gap: 18 }}>
           <div className="adm-card adm-card-pad">
             <div className="adm-stat__label" style={{ marginBottom: 12 }}>
@@ -99,7 +99,7 @@ export default async function ClienteDetalhePage({ params }: { params: { id: str
           {cliente.orders.length === 0 ? (
             <p style={{ fontSize: 13.5, color: 'var(--tinta-2)' }}>Esse cliente ainda não fez nenhum pedido.</p>
           ) : (
-            <div style={{ display: 'grid' }}>
+            <div className="adm-lista">
               {cliente.orders.map((o) => (
                 <Link key={o.id} href={`/pedidos/${o.id}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 2px', borderBottom: '1px solid var(--linha)' }}>
                   <span style={{ flex: 1, minWidth: 0 }}>

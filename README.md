@@ -54,7 +54,20 @@ Para dar acesso a mais alguém, a pessoa precisa ter conta na loja; depois é s�
 - **Clientes** — busca, total gasto, última compra; no detalhe, contato, endereço, medidas salvas e o histórico de pedidos.
 - **Ajustes** — dados da loja, áreas de entrega e frete, formas de pagamento com taxa, valor do grama da prata (com histórico, porque muda com o mercado), despesas fixas e quem entra no painel.
 
-No celular a barra lateral vira gaveta pelo botão de menu, com os mesmos itens e contadores.
+## No celular
+
+O painel é feito para ser usado do telefone — é de lá que o dono olha o pedido
+enquanto está na bancada. Todas as telas foram medidas em 320, 360 e 390 px de
+largura: nenhuma rola para o lado.
+
+- A barra lateral vira gaveta pelo botão de menu, com os mesmos itens e contadores.
+- As tabelas viram cartões; o que continua sendo tabela rola só dentro do próprio quadro.
+- A linha do tempo do pedido fica em pé, para dar para ver o passo atual sem arrastar.
+- Os gráficos medem a largura que têm e desenham nela, então o eixo continua legível.
+- Botão, chave e caixa de seleção crescem para o tamanho do dedo em tela de toque.
+- **Reordenar tem botões de subir e descer**, porque arrastar e soltar não
+  funciona no dedo: os eventos de arrasto do HTML não existem no toque. No
+  computador o arrasto continua valendo, que é mais rápido para muita coisa.
 
 ## Pedidos que vêm da loja
 

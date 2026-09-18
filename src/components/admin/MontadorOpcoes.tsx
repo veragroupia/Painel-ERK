@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { ConfirmButton } from './ConfirmButton';
 import { alternarOpcao, reordenarOpcoes, salvarOpcao, excluirOpcao } from '@/lib/admin/montadorActions';
+import { BotoesMover } from './BotoesMover';
 
 type Opcao = { id: string; nome: string; descricao: string; ativa: boolean };
 
@@ -23,12 +24,24 @@ export function MontadorOpcoes({ etapa, titulo, opcoes }: { etapa: string; titul
     const para = atual.findIndex((o) => o.id === alvoId);
     const [movido] = atual.splice(de, 1);
     atual.splice(para, 0, movido);
-    setOrdem(atual);
     setArrastando(null);
+    aplicar(atual);
+  }
+
+  function aplicar(atual: typeof ordem) {
+    setOrdem(atual);
     start(async () => {
       await reordenarOpcoes(atual.map((o) => o.id));
       router.refresh();
     });
+  }
+
+  function mover(de: number, para: number) {
+    if (para < 0 || para >= ordem.length) return;
+    const atual = [...ordem];
+    const [movido] = atual.splice(de, 1);
+    atual.splice(para, 0, movido);
+    aplicar(atual);
   }
 
   return (
@@ -38,7 +51,7 @@ export function MontadorOpcoes({ etapa, titulo, opcoes }: { etapa: string; titul
       </div>
 
       <div style={{ display: 'grid', gap: 8 }}>
-        {ordem.map((o) => (
+        {ordem.map((o, i) => (
           <div
             key={o.id}
             className="adm-drag-row"
@@ -49,7 +62,8 @@ export function MontadorOpcoes({ etapa, titulo, opcoes }: { etapa: string; titul
             style={{ opacity: arrastando === o.id ? 0.5 : o.ativa ? 1 : 0.55 }}
           >
             <Icon name="adm_arrasto" size={16} className="adm-drag-handle" />
-            <span style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--fundo-3)', display: 'grid', placeItems: 'center', flex: 'none', color: 'var(--tinta-3)' }}>
+            <BotoesMover aoSubir={() => mover(i, i - 1)} aoDescer={() => mover(i, i + 1)} primeiro={i === 0} ultimo={i === ordem.length - 1} rotulo={o.nome} />
+            <span className="adm-drag-fig">
               <Icon name="adm_pecas" size={15} />
             </span>
             <span style={{ flex: 1, minWidth: 0 }}>

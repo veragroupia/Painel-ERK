@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { GiroViewer } from './GiroViewer';
 import { ConfirmButton } from './ConfirmButton';
 import { adicionarFoto, removerFoto, definirCapa, reordenarFotos, decidirModelo3d, definirUrlModelo3d } from '@/lib/admin/productActions';
+import { BotoesMover } from './BotoesMover';
 
 type Foto = { id: string; url: string; capa?: boolean };
 type QuadroLocal = { nome: string; url: string; largura: number; altura: number; brilho: number; progresso: number };
@@ -98,10 +99,22 @@ export function PecaMidia({
     const [movido] = ids.splice(de, 1);
     ids.splice(para, 0, movido);
     setArrastando(null);
+    aplicarOrdem(ids);
+  }
+
+  function aplicarOrdem(ids: string[]) {
     start(async () => {
       await reordenarFotos(productId, ids);
       router.refresh();
     });
+  }
+
+  function moverFoto(de: number, para: number) {
+    if (para < 0 || para >= galeria.length) return;
+    const ids = galeria.map((f) => f.id);
+    const [movido] = ids.splice(de, 1);
+    ids.splice(para, 0, movido);
+    aplicarOrdem(ids);
   }
 
   return (
@@ -111,11 +124,11 @@ export function PecaMidia({
         <div className="adm-stat__label" style={{ marginBottom: 4 }}>
           Galeria de fotos
         </div>
-        <p style={{ fontSize: 12, color: 'var(--tinta-3)', margin: '0 0 14px' }}>Arraste para reordenar. A primeira marcada como capa é a que aparece no catálogo.</p>
+        <p style={{ fontSize: 12, color: 'var(--tinta-3)', margin: '0 0 14px' }}>A foto marcada como capa é a que aparece no catálogo.</p>
 
         {galeria.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
-            {galeria.map((f) => (
+            {galeria.map((f, i) => (
               <div
                 key={f.id}
                 draggable
@@ -124,6 +137,15 @@ export function PecaMidia({
                 onDrop={() => soltarGaleria(f.id)}
                 style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', border: f.capa ? '2px solid var(--tinta)' : '1px solid var(--linha)', cursor: 'grab' }}
               >
+                <BotoesMover
+                  className="adm-mover--sobre"
+                  eixo="horizontal"
+                  aoSubir={() => moverFoto(i, i - 1)}
+                  aoDescer={() => moverFoto(i, i + 1)}
+                  primeiro={i === 0}
+                  ultimo={i === galeria.length - 1}
+                  rotulo={`foto ${i + 1}`}
+                />
                 <img src={f.url} alt="" style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover', display: 'block' }} />
                 <div style={{ position: 'absolute', inset: 'auto 0 0 0', display: 'flex', gap: 4, padding: 6, background: 'linear-gradient(transparent, rgba(13,15,18,.9))' }}>
                   {f.capa ? (

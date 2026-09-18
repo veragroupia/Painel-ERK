@@ -28,8 +28,11 @@
 .adm-sidebar-foot span:first-child { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; color: var(--tinta-3); text-transform: uppercase; }
 .adm-sidebar-foot em { font-style: normal; font-size: 11.5px; color: var(--tinta-3); }
 
+/* min-width:0 nos dois: sem isso um filho que não quebra (linha de botões,
+   tabela larga) estica a coluna inteira e a página ganha rolagem lateral. */
 .adm-content { flex: 1; min-width: 0; padding: clamp(16px, 2vw, 32px); display: flex; justify-content: center; }
-.adm-content > div { width: 100%; max-width: 1360px; }
+.adm-content > div { width: 100%; max-width: 1360px; min-width: 0; }
+.adm-shell, .adm-content, .adm-card, .adm-card-pad { min-width: 0; }
 
 .adm-drawer-veil { display: none; }
 .adm-drawer { display: none; }
@@ -55,7 +58,10 @@
 .adm-cab { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
 
 /* faixa do dia / cartões de indicador */
-.adm-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+/* A coluna vem de --cols (não de grid-template-columns direto) porque as telas
+   ajustam a proporção por style inline. Style inline ganha de media query; uma
+   variável, não — assim o empilhamento no celular continua valendo. */
+.adm-stats { display: grid; grid-template-columns: var(--cols, repeat(4, 1fr)); gap: 16px; min-width: 0; }
 .adm-stat { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; padding: 18px 20px; box-shadow: 0 16px 38px rgba(0, 0, 0, .5); min-width: 0; }
 .adm-stat__label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .adm-stat__value { font-weight: 600; font-size: clamp(21px, 2.2vw, 28px); letter-spacing: -.01em; margin-top: 8px; color: var(--tinta); }
@@ -63,12 +69,18 @@
 .adm-stat__delta.up { color: var(--ok); }
 .adm-stat__delta.down { color: var(--acento); }
 @media (max-width: 900px) { .adm-stats { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) {
+  /* na tela estreita o rótulo quebra em vez de cortar com reticências:
+     "Faturamento de hoje" cabia como "Faturamento de …", que não diz nada */
+  .adm-stat__label { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }
+}
 @media (max-width: 480px) { .adm-stats { grid-template-columns: 1fr 1fr; gap: 10px; } .adm-stat { padding: 14px 16px; } }
+@media (max-width: 360px) { .adm-stats { grid-template-columns: 1fr; } }
 
 /* cartão de lucro do mês */
 .adm-profit-card { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; padding: 24px clamp(20px, 3vw, 28px); box-shadow: 0 16px 38px rgba(0, 0, 0, .5); }
 .adm-profit-value { font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: -.01em; color: var(--ok); }
-.adm-profit-lines { display: grid; gap: 2px; margin-top: 18px; font-size: 13.5px; }
+.adm-profit-lines { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; margin-top: 18px; font-size: 13.5px; }
 .adm-profit-line { display: flex; justify-content: space-between; gap: 12px; color: var(--tinta-2); padding: 6px 0; }
 .adm-profit-line.total { border-top: 1px solid var(--linha); margin-top: 6px; padding-top: 12px; color: var(--tinta); font-weight: 600; font-size: 14.5px; }
 .adm-meter { height: 8px; border-radius: 999px; background: var(--fundo-3); overflow: hidden; margin-top: 14px; }
@@ -76,7 +88,22 @@
 .adm-meter-caption { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--tinta-3); margin-top: 6px; }
 
 /* precisa de você */
-.adm-todo { display: grid; }
+.adm-todo { display: grid; grid-template-columns: minmax(0, 1fr); }
+
+/* Lista simples de linhas dentro de um cartão.
+   minmax(0, 1fr) em vez de 1fr: sem isso a coluna nunca encolhe abaixo do
+   conteúdo mais largo, e uma linha comprida estica o cartão para fora da tela. */
+.adm-lista { display: grid; grid-template-columns: minmax(0, 1fr); }
+
+/* Toda tela do painel é uma pilha de cartões num grid. A coluna precisa poder
+   encolher abaixo do conteúdo: sem isso basta uma linha teimosa lá no fundo
+   (uma linha de botões, uma pílula comprida) para esticar a tela inteira e
+   criar rolagem lateral. */
+.adm-content .erk-entra { grid-template-columns: minmax(0, 1fr); }
+
+/* voltar para a lista — no celular é o caminho de saída mais usado,
+   então precisa de altura de dedo mesmo sendo um link discreto */
+.adm-voltar { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--tinta-2); }
 .adm-todo-item { display: flex; align-items: center; gap: 12px; padding: 13px 6px; border-bottom: 1px solid var(--linha); cursor: pointer; text-decoration: none; color: inherit; background: none; border-left: 0; border-right: 0; border-top: 0; width: 100%; text-align: left; font: inherit; }
 .adm-todo-item:last-child { border-bottom: 0; }
 .adm-todo-item:hover { background: var(--fundo-2); }
@@ -100,8 +127,8 @@
 .adm-table tbody tr:hover td { background: var(--fundo-3); }
 
 /* cartões de linha (celular) */
-.adm-rowcard { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 16px; display: grid; gap: 8px; }
-.adm-rowcards { display: grid; gap: 10px; }
+.adm-rowcard { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.adm-rowcards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 
 /* linha do tempo do pedido */
 .adm-timeline { display: flex; gap: 0; overflow-x: auto; padding: 6px 0 2px; }
@@ -114,7 +141,44 @@
 .adm-timeline-step.is-done .adm-timeline-label, .adm-timeline-step.is-current .adm-timeline-label { color: var(--tinta); }
 .adm-timeline-time { font-size: 10.5px; color: var(--tinta-3); text-align: center; }
 
+/* No celular a linha do tempo vira vertical. Deitada ela só cabia rolando
+   para o lado, e o dono não via em que passo o pedido está sem arrastar. */
+@media (max-width: 560px) {
+  .adm-timeline { flex-direction: column; gap: 0; overflow-x: visible; padding: 4px 0 0; }
+  .adm-timeline-step {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 1px;
+    align-items: start;
+    min-width: 0;
+    padding: 0 0 18px;
+  }
+  .adm-timeline-step:last-child { padding-bottom: 0; }
+  .adm-timeline-dot { grid-column: 1; grid-row: 1 / span 4; margin-top: 1px; }
+  .adm-timeline-label, .adm-timeline-time { grid-column: 2; text-align: left; }
+  .adm-timeline-label { font-size: 13px; }
+  .adm-timeline-time { font-size: 11.5px; }
+  .adm-timeline-step:not(:last-child)::after {
+    top: 22px;
+    bottom: 2px;
+    left: 8px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+}
+
 /* abas */
+/* fileira de filtros. No computador quebra em linhas; no celular vira uma
+   faixa que rola, senão dez categorias empurram as peças para fora da tela. */
+.adm-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .adm-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .adm-chips::-webkit-scrollbar { display: none; }
+  .adm-chips > * { flex: none; }
+}
+
 .adm-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--linha); margin-bottom: 22px; overflow-x: auto; }
 .adm-tab { padding: 12px 16px; font-size: 13.5px; font-weight: 500; color: var(--tinta-2); border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; background: none; border-top: 0; border-left: 0; border-right: 0; font-family: inherit; }
 .adm-tab.is-on { color: var(--tinta); border-color: var(--tinta); font-weight: 600; }
@@ -145,19 +209,39 @@
 /* grades */
 .adm-card { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; box-shadow: 0 16px 38px rgba(0, 0, 0, .5); }
 .adm-card-pad { padding: 20px clamp(16px, 2vw, 24px); }
-.adm-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.adm-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.adm-grid-2 { display: grid; grid-template-columns: var(--cols, 1fr 1fr); gap: 16px; min-width: 0; }
+.adm-grid-3 { display: grid; grid-template-columns: var(--cols, repeat(3, 1fr)); gap: 16px; min-width: 0; }
 @media (max-width: 900px) { .adm-grid-2, .adm-grid-3 { grid-template-columns: 1fr; } }
 .adm-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); gap: 16px; }
 @media (max-width: 560px) { .adm-cards { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 
-.adm-piece-card { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; cursor: grab; }
+.adm-piece-card { position: relative; background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; cursor: grab; }
 .adm-piece-card__fig { aspect-ratio: 1/1; background: var(--fundo-3); overflow: hidden; position: relative; }
 .adm-piece-card__fig img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.9); }
 .adm-piece-card__b { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; }
 
-.adm-drag-row { display: flex; align-items: center; gap: 10px; background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 12px; padding: 10px 12px; }
+.adm-drag-row { display: flex; align-items: center; gap: 10px; background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.adm-drag-row > * { min-width: 0; }
+@media (max-width: 560px) { .adm-drag-row { flex-wrap: wrap; row-gap: 8px; } }
 .adm-drag-handle { flex: none; color: var(--tinta-3); cursor: grab; }
+.adm-drag-fig { width: 34px; height: 34px; border-radius: 9px; background: var(--fundo-3); display: grid; place-items: center; flex: none; color: var(--tinta-3); }
+
+/* subir/descer: no computador o arrasto dá conta, então os botões só
+   aparecem na largura de celular, onde arrastar não funciona */
+.adm-mover { display: none; }
+.adm-mover button { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 9px; border: 1px solid var(--linha); background: var(--fundo-3); color: var(--tinta-2); cursor: pointer; padding: 0; }
+.adm-mover button:disabled { opacity: .35; cursor: default; }
+/* na grade de cartões o par flutua sobre a imagem, no canto de cima */
+.adm-mover--sobre { position: absolute; top: 8px; right: 8px; z-index: 3; }
+.adm-mover--sobre button { background: rgba(13, 15, 18, .86); backdrop-filter: blur(6px); }
+.adm-piece-card { position: relative; }
+
+@media (max-width: 720px) {
+  .adm-mover { display: inline-flex; gap: 6px; flex: none; }
+  /* a alça de arrastar não serve no dedo, e o ícone da esquerda é enfeite:
+     os dois saem para o nome e a descrição terem onde caber */
+  .adm-drag-handle, .adm-drag-fig { display: none; }
+}
 .adm-switch { position: relative; width: 38px; height: 22px; flex: none; }
 .adm-switch input { opacity: 0; width: 100%; height: 100%; position: absolute; margin: 0; cursor: pointer; }
 .adm-switch-track { position: absolute; inset: 0; border-radius: 999px; background: var(--linha-2); transition: background 160ms var(--ez); pointer-events: none; }
@@ -171,3 +255,40 @@
 
 /* prancha de componentes */
 .adm-swatch-label { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); margin-bottom: 10px; }
+
+/* ===================================================================
+   Toque
+   No celular quem opera o painel usa o dedo, não o cursor: em tela de
+   toque (pointer: coarse) os alvos crescem para caber a ponta do dedo,
+   sem engordar a interface de quem está no computador.
+   =================================================================== */
+/* base da caixa de seleção: o padrão do navegador é pequeno demais e nasce
+   claro, destoando do tema escuro */
+.adm-shell input[type="checkbox"], .adm-modal input[type="checkbox"] { width: 18px; height: 18px; flex: none; accent-color: var(--ok); cursor: pointer; }
+/* a chave é um checkbox disfarçado: o input precisa continuar cobrindo a
+   chave inteira, senão só o meio dela responde ao toque */
+.adm-switch input[type="checkbox"] { width: 100%; height: 100%; }
+
+.adm-check-tap { display: inline-flex; align-items: center; justify-content: center; flex: none; cursor: pointer; }
+.adm-link-btn { font-size: 11.5px; color: var(--tinta-2); background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit; text-align: left; justify-self: start; align-self: start; width: fit-content; max-width: 100%; }
+.adm-link-btn:disabled { opacity: .5; }
+
+/* A regra vale por largura (é onde o painel já vira gaveta) e também em
+   qualquer tela de toque, para o tablet largo não ficar com alvo de mouse. */
+@media (max-width: 900px), (pointer: coarse) {
+  /* o negativo na margem faz a área crescer sem mexer no desenho da linha */
+  .adm-link-btn { min-height: 36px; padding: 0 10px; margin: -6px 0 -6px -10px; font-size: 12.5px; }
+  .adm-shell input[type="checkbox"], .adm-modal input[type="checkbox"] { width: 24px; height: 24px; }
+  .adm-switch input[type="checkbox"] { width: 100%; height: 100%; }
+  .adm-switch { width: 46px; height: 28px; }
+  .adm-switch-track::after { width: 24px; height: 24px; }
+  .adm-switch input:checked + .adm-switch-track::after { transform: translateX(18px); }
+  .adm-avatar { width: 40px; height: 40px; }
+  .adm-tab { padding: 14px 16px; }
+  /* a área de toque cresce à volta da caixa; o quadrado continua do tamanho
+     que estava, então a linha do cartão não muda de desenho */
+  .adm-check-tap { min-width: 44px; min-height: 44px; margin: -10px 0 -10px -10px; }
+  .adm-voltar { min-height: 40px; padding-right: 10px; }
+  .erk-chip { min-height: 38px; }
+  .adm-todo-item { padding: 15px 6px; }
+}

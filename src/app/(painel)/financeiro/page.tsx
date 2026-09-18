@@ -112,7 +112,7 @@ export default async function FinanceiroPage({ searchParams }: { searchParams: {
         </div>
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '1fr 1fr', alignItems: 'start' }}>
+      <div className="adm-grid-2" style={{ ...({ '--cols': '1fr 1fr' } as React.CSSProperties), alignItems: 'start' }}>
         <div className="adm-profit-card">
           <div className="adm-stat__label">Lucro do mês</div>
           <div className="adm-profit-value" style={lucro < 0 ? { color: 'var(--acento)' } : undefined}>
@@ -179,7 +179,7 @@ export default async function FinanceiroPage({ searchParams }: { searchParams: {
                   <MarginBadge pct={p.margem} />
                 </div>
               ))}
-              <Link href="/pecas" style={{ fontSize: 12.5, color: 'var(--tinta-2)', marginTop: 4 }}>
+              <Link href="/pecas" className="adm-link-btn" style={{ marginTop: 4 }}>
                 Revisar preços no catálogo →
               </Link>
             </div>

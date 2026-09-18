@@ -42,14 +42,14 @@ export default async function PecasPage({ searchParams }: { searchParams: { cate
       <div className="adm-cab">
         <div>
           <h1 className="adm-h">Peças</h1>
-          <p className="adm-sub">{pecas.length} peças no catálogo · arraste os cartões para mudar a ordem da vitrine</p>
+          <p className="adm-sub">{pecas.length} peças no catálogo · mude a ordem para mudar a vitrine</p>
         </div>
         <Link href="/pecas/nova" className="erk-btn erk-btn--p">
           + Nova peça
         </Link>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div className="adm-chips">
         <Link href="/pecas" className={'erk-chip' + (categoria === 'todas' && situacao === 'todas' ? ' is-on' : '')} style={{ textDecoration: 'none' }}>
           Todas
         </Link>

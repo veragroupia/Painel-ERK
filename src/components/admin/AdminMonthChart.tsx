@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { fmt } from '@/lib/format';
+import { useLarguraGrafico } from '@/lib/admin/useLarguraGrafico';
 
 export type DiaGrafico = { dia: number; custo: number; lucro: number; faturamento: number };
 
@@ -11,14 +12,16 @@ const COR_FATURAMENTO = '#F2F4F7';
 
 export function AdminMonthChart({ dados }: { dados: DiaGrafico[] }) {
   const [ativo, setAtivo] = useState<number | null>(null);
+  const { ref, largura } = useLarguraGrafico();
   const max = Math.max(1, ...dados.map((d) => d.faturamento));
-  const W = 760;
-  const H = 220;
+  const estreito = largura < 520;
+  const W = largura;
+  const H = estreito ? 190 : 220;
   const padTop = 10;
-  const padBottom = 22;
+  const padBottom = 24;
   const plotH = H - padTop - padBottom;
-  const barGap = 3;
-  const barW = Math.max(3, W / dados.length - barGap);
+  const barGap = estreito ? 2 : 3;
+  const barW = Math.max(2, W / dados.length - barGap);
   const y = (v: number) => padTop + plotH - (v / max) * plotH;
 
   const pontosLinha = dados.map((d, i) => {
@@ -30,8 +33,8 @@ export function AdminMonthChart({ dados }: { dados: DiaGrafico[] }) {
   const diaAtivo = ativo !== null ? dados[ativo] : null;
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ display: 'flex', gap: 18, marginBottom: 12, fontSize: 12, color: 'var(--tinta-2)' }}>
+    <div ref={ref} style={{ position: 'relative' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 18px', marginBottom: 12, fontSize: 12, color: 'var(--tinta-2)' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <i style={{ width: 8, height: 8, borderRadius: 2, background: COR_CUSTO, display: 'inline-block' }} /> Custo
         </span>
@@ -43,14 +46,27 @@ export function AdminMonthChart({ dados }: { dados: DiaGrafico[] }) {
         </span>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} role="img" aria-label="Gráfico de custo, lucro e faturamento por dia do mês" onMouseLeave={() => setAtivo(null)}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        width="100%"
+        height={H}
+        style={{ display: 'block', touchAction: 'pan-y' }}
+        role="img"
+        aria-label="Gráfico de custo, lucro e faturamento por dia do mês"
+        onMouseLeave={() => setAtivo(null)}
+      >
         {dados.map((d, i) => {
           const x = i * (W / dados.length) + barGap / 2;
           const custoH = (d.custo / max) * plotH;
           const lucroH = (d.lucro / max) * plotH;
           const semVenda = d.faturamento === 0;
           return (
-            <g key={d.dia} onMouseEnter={() => setAtivo(i)}>
+            <g
+              key={d.dia}
+              onMouseEnter={() => setAtivo(i)}
+              onPointerDown={() => setAtivo((a) => (a === i ? null : i))}
+              style={{ cursor: 'pointer' }}
+            >
               <rect x={x - 1} y={padTop} width={barW + 2} height={plotH} fill="transparent" />
               {semVenda ? (
                 <rect x={x} y={padTop + plotH - 2} width={barW} height={2} rx={1} fill="var(--linha-2)" />
@@ -71,8 +87,8 @@ export function AdminMonthChart({ dados }: { dados: DiaGrafico[] }) {
             <circle key={i} cx={p.x} cy={p.y} r={2.5} fill={COR_FATURAMENTO} />
           ))}
         {dados.map((d, i) =>
-          d.dia % 5 === 0 || i === 0 ? (
-            <text key={d.dia} x={i * (W / dados.length) + W / dados.length / 2} y={H - 4} fontSize={10} fill="var(--tinta-3)" textAnchor="middle">
+          d.dia % (estreito ? 7 : 5) === 0 || i === 0 || i === dados.length - 1 ? (
+            <text key={d.dia} x={i * (W / dados.length) + W / dados.length / 2} y={H - 6} fontSize={11} fill="var(--tinta-3)" textAnchor="middle">
               {d.dia}
             </text>
           ) : null
@@ -83,8 +99,10 @@ export function AdminMonthChart({ dados }: { dados: DiaGrafico[] }) {
         <div
           style={{
             position: 'absolute',
-            top: 8,
+            top: estreito ? 'auto' : 8,
+            bottom: estreito ? -4 : 'auto',
             right: 0,
+            left: estreito ? 0 : 'auto',
             background: 'var(--fundo-3)',
             border: '1px solid var(--linha-2)',
             borderRadius: 10,
@@ -92,6 +110,7 @@ export function AdminMonthChart({ dados }: { dados: DiaGrafico[] }) {
             fontSize: 12.5,
             minWidth: 150,
             pointerEvents: 'none',
+            zIndex: 2,
             boxShadow: '0 8px 22px rgba(0,0,0,.5)',
           }}
         >

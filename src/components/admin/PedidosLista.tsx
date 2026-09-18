@@ -157,7 +157,9 @@ export function PedidosLista({ linhas }: { linhas: PedidoLinha[] }) {
           return (
             <div key={l.id} className="adm-rowcard">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <input type="checkbox" checked={selecionados.includes(l.id)} onChange={() => alternar(l.id)} aria-label={`Selecionar pedido ${l.numero}`} style={{ width: 20, height: 20, flex: 'none' }} />
+                <label className="adm-check-tap">
+                  <input type="checkbox" checked={selecionados.includes(l.id)} onChange={() => alternar(l.id)} aria-label={`Selecionar pedido ${l.numero}`} />
+                </label>
                 {l.foto ? <img src={l.foto} alt="" width={40} height={40} style={{ borderRadius: 8, objectFit: 'cover', flex: 'none' }} /> : null}
                 <Link href={`/pedidos/${l.id}`} style={{ flex: 1, minWidth: 0 }}>
                   <b style={{ fontSize: 14 }}>#{l.numero}</b>

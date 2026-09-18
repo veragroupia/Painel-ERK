@@ -56,13 +56,13 @@ export function VitrineDestaque({ dias, opcoes }: { dias: Dia[]; opcoes: Opcao[]
             <span style={{ fontSize: 11.5, color: 'var(--tinta-3)', textTransform: 'capitalize' }}>{d.rotulo}</span>
             <span style={{ fontSize: 13, minHeight: 34, lineHeight: 1.3 }}>{d.alvoNome || <em style={{ color: 'var(--tinta-3)', fontStyle: 'normal' }}>vazio</em>}</span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" style={{ fontSize: 11.5, color: 'var(--tinta-2)', background: 'none', border: 0, padding: 0, cursor: 'pointer' }} onClick={() => setEscolhendo(d.iso)}>
+              <button type="button" className="adm-link-btn" onClick={() => setEscolhendo(d.iso)}>
                 escolher
               </button>
               {d.alvoNome ? (
                 <button
                   type="button"
-                  style={{ fontSize: 11.5, color: 'var(--tinta-3)', background: 'none', border: 0, padding: 0, cursor: 'pointer' }}
+                  className="adm-link-btn"
                   onClick={() => start(async () => { await limparDestaque(d.iso); router.refresh(); })}
                 >
                   limpar

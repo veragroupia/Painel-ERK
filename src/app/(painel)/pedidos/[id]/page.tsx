@@ -59,7 +59,7 @@ export default async function PedidoDetalhePage({ params }: { params: { id: stri
 
   return (
     <div className="erk-entra" style={{ display: 'grid', gap: 18 }}>
-      <Link href="/pedidos" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--tinta-2)' }}>
+      <Link href="/pedidos" className="adm-voltar">
         <Icon name="voltar" size={15} /> Pedidos
       </Link>
 
@@ -102,7 +102,7 @@ export default async function PedidoDetalhePage({ params }: { params: { id: stri
         {pedido.status === 'cancelado' ? <p style={{ color: 'var(--acento)', fontSize: 13, marginTop: 12 }}>Pedido cancelado{pedido.canceledAt ? ` em ${dataHora(pedido.canceledAt)}` : ''}.</p> : null}
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '1.3fr .7fr', alignItems: 'start' }}>
+      <div className="adm-grid-2" style={{ ...({ '--cols': '1.3fr .7fr' } as React.CSSProperties), alignItems: 'start' }}>
         <div style={{ display: 'grid', gap: 18 }}>
           {/* itens */}
           <div className="adm-card adm-card-pad">

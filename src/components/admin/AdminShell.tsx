@@ -92,7 +92,7 @@ export function AdminShell({
         <nav className={'adm-drawer' + (aberto ? ' is-open' : '')}>
           <div className="adm-drawer-head">
             <span className="adm-logo">ERK Pratas</span>
-            <button aria-label="Fechar menu" onClick={() => setAberto(false)} style={{ background: 'none', border: 0, color: 'var(--tinta)', cursor: 'pointer' }}>
+            <button aria-label="Fechar menu" onClick={() => setAberto(false)} style={{ background: 'none', border: 0, color: 'var(--tinta)', cursor: 'pointer', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '-8px -10px -8px 0' }}>
               <Icon name="fechar" size={20} />
             </button>
           </div>
