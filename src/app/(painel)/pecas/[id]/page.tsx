@@ -31,7 +31,7 @@ export default async function PecaPage({ params, searchParams }: { params: { id:
 
   return (
     <div className="erk-entra" style={{ display: 'grid', gap: 18 }}>
-      <Link href="/pecas" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--tinta-2)' }}>
+      <Link href="/pecas" className="adm-voltar">
         <Icon name="voltar" size={15} /> Peças
       </Link>
 

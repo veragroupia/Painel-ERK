@@ -107,7 +107,7 @@ export function InsumosLista({ insumos, historico, periodo }: { insumos: Insumo[
         {historico.length === 0 ? (
           <p style={{ fontSize: 13.5, color: 'var(--tinta-2)' }}>Nada consumido nesse período.</p>
         ) : (
-          <div style={{ display: 'grid' }}>
+          <div className="adm-lista">
             {historico.map((h) => (
               <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 2px', borderBottom: '1px solid var(--linha)', fontSize: 13.5 }}>
                 <span style={{ flex: 1, minWidth: 0 }}>

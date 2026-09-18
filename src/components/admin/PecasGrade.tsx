@@ -7,6 +7,7 @@ import { fmt } from '@/lib/format';
 import { MarginBadge } from './MarginBadge';
 import { AdminEmptyState } from './AdminEmptyState';
 import { reordenarPecas } from '@/lib/admin/productActions';
+import { BotoesMover } from './BotoesMover';
 
 export type PecaCard = {
   id: string;
@@ -51,17 +52,29 @@ export function PecasGrade({ cards, podeReordenar }: { cards: PecaCard[]; podeRe
     const para = atual.findIndex((c) => c.id === alvoId);
     const [movido] = atual.splice(de, 1);
     atual.splice(para, 0, movido);
-    setOrdem(atual);
     setArrastando(null);
+    aplicar(atual);
+  }
+
+  function aplicar(atual: typeof ordem) {
+    setOrdem(atual);
     start(async () => {
       await reordenarPecas(atual.map((c) => c.id));
       router.refresh();
     });
   }
 
+  function mover(de: number, para: number) {
+    if (para < 0 || para >= ordem.length) return;
+    const atual = [...ordem];
+    const [movido] = atual.splice(de, 1);
+    atual.splice(para, 0, movido);
+    aplicar(atual);
+  }
+
   return (
     <div className="adm-cards">
-      {ordem.map((c) => (
+      {ordem.map((c, i) => (
         <div
           key={c.id}
           className="adm-piece-card"
@@ -71,16 +84,27 @@ export function PecasGrade({ cards, podeReordenar }: { cards: PecaCard[]; podeRe
           onDrop={() => soltar(c.id)}
           style={{ opacity: arrastando === c.id ? 0.5 : 1, cursor: podeReordenar ? 'grab' : 'default' }}
         >
+          {podeReordenar ? (
+            <BotoesMover
+              className="adm-mover--sobre"
+              eixo="horizontal"
+              aoSubir={() => mover(i, i - 1)}
+              aoDescer={() => mover(i, i + 1)}
+              primeiro={i === 0}
+              ultimo={i === ordem.length - 1}
+              rotulo={c.nome}
+            />
+          ) : null}
           <Link href={`/pecas/${c.id}`} style={{ display: 'contents' }}>
             <div className="adm-piece-card__fig">
               <img src={c.foto} alt="" />
               {c.situacao !== 'published' ? (
-                <span className="adm-pill" style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(13,15,18,.86)', color: 'var(--tinta-2)' }}>
+                <span className="adm-pill" style={{ position: 'absolute', bottom: 8, left: 8, background: 'rgba(13,15,18,.86)', color: 'var(--tinta-2)' }}>
                   {SITUACAO_NOME[c.situacao]}
                 </span>
               ) : null}
               {c.modelo3d === 'pending' ? (
-                <span className="adm-pill" style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(216,54,62,.9)', color: '#fff' }}>
+                <span className="adm-pill" style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(216,54,62,.9)', color: '#fff' }}>
                   3D p/ aprovar
                 </span>
               ) : null}

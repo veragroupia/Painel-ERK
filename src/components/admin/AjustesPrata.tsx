@@ -44,7 +44,7 @@ export function AjustesPrata({ atual, historico }: { atual: number; historico: R
         <div className="adm-stat__label" style={{ marginBottom: 12 }}>
           Histórico de alterações
         </div>
-        <div style={{ display: 'grid' }}>
+        <div className="adm-lista">
           {historico.map((h, i) => {
             const anterior = historico[i + 1];
             const diff = anterior ? h.valor - anterior.valor : 0;

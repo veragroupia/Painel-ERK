@@ -33,7 +33,7 @@ export function PecaCusto({ productId, grama, inicial, insumos, usos }: { produc
   const numero = (s: string) => parseFloat(s.replace(',', '.')) || 0;
 
   return (
-    <div className="adm-grid-2" style={{ gridTemplateColumns: '1.35fr .65fr', alignItems: 'start' }}>
+    <div className="adm-grid-2" style={{ ...({ '--cols': '1.35fr .65fr' } as React.CSSProperties), alignItems: 'start' }}>
       <div className="adm-card adm-card-pad" style={{ display: 'grid', gap: 18 }}>
         <div>
           <div className="adm-stat__label" style={{ marginBottom: 10 }}>
