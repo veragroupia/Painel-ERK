@@ -38,7 +38,7 @@ export default async function InsumosPage({ searchParams }: { searchParams: { pe
         </div>
       </div>
 
-      <div className="adm-stats" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+      <div className="adm-stats adm-stats--3">
         <div className="adm-stat">
           <div className="adm-stat__label">Gasto de insumo no mês</div>
           <div className="adm-stat__value">{fmt(gastoMes)}</div>
