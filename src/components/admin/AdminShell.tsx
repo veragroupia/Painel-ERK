@@ -16,6 +16,7 @@ const NAV: AdminNavItem[] = [
   { href: '/montador', label: 'Montador', icon: 'adm_montador' },
   { href: '/insumos', label: 'Insumos', icon: 'adm_insumos' },
   { href: '/financeiro', label: 'Financeiro', icon: 'adm_financeiro' },
+  { href: '/avaliacoes', label: 'Avaliações', icon: 'adm_estrela' },
   { href: '/clientes', label: 'Clientes', icon: 'adm_clientes' },
   { href: '/ajustes', label: 'Ajustes', icon: 'adm_ajustes' },
 ];

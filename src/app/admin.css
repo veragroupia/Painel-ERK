@@ -62,8 +62,9 @@
 .adm-stat__delta { font-size: 12.5px; margin-top: 6px; display: flex; gap: 4px; align-items: center; }
 .adm-stat__delta.up { color: var(--ok); }
 .adm-stat__delta.down { color: var(--acento); }
-@media (max-width: 900px) { .adm-stats { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .adm-stats { grid-template-columns: 1fr 1fr; gap: 10px; } .adm-stat { padding: 14px 16px; } }
+.adm-stats--3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .adm-stats, .adm-stats--3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .adm-stats, .adm-stats--3 { grid-template-columns: 1fr; gap: 10px; } .adm-stat { padding: 14px 16px; } }
 
 /* cartão de lucro do mês */
 .adm-profit-card { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; padding: 24px clamp(20px, 3vw, 28px); box-shadow: 0 16px 38px rgba(0, 0, 0, .5); }
@@ -171,3 +172,27 @@
 
 /* prancha de componentes */
 .adm-swatch-label { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); margin-bottom: 10px; }
+
+/* ---------------- avaliações ---------------- */
+.adm-estrelas { display: inline-flex; align-items: center; gap: 2px; line-height: 0; }
+.adm-estrelas svg { flex: none; width: var(--adm-estrela-tam, 14px); height: var(--adm-estrela-tam, 14px); display: block; }
+
+.adm-aval { display: grid; gap: 10px; }
+.adm-aval__topo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.adm-aval__topo b { font-size: 14.5px; font-weight: 600; }
+.adm-aval__topo time { margin-left: auto; font-size: 12px; color: var(--tinta-3); }
+.adm-aval__verificado { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--ok); }
+.adm-aval__verificado::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--ok); }
+.adm-aval__peca { margin: 0; font-size: 12.5px; color: var(--tinta-3); }
+.adm-aval__peca a { color: var(--tinta-2); text-decoration: underline; text-underline-offset: 3px; }
+.adm-aval__peca a:hover { color: var(--tinta); }
+.adm-aval__texto { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--tinta-2); max-width: 78ch; white-space: pre-line; }
+.adm-aval__semtexto { margin: 0; font-size: 13.5px; color: var(--tinta-3); font-style: italic; }
+.adm-aval__acoes { display: flex; justify-content: flex-end; }
+
+@media (max-width: 760px) {
+  /* a data cai de linha em vez de espremer o nome do cliente */
+  .adm-aval__topo time { margin-left: 0; flex-basis: 100%; }
+  .adm-aval__acoes { justify-content: stretch; }
+  .adm-aval__acoes > button { width: 100%; }
+}

@@ -21,6 +21,7 @@ model User {
   favorites Favorite[]
   cartItems CartItem[]
   orders    Order[]
+  reviews   Review[]
   measurements Measurement?
 }
 
@@ -100,6 +101,7 @@ model Product {
   supplyUsages  ProductSupplyUsage[]
   comboItems    ComboItem[]
   highlights    HighlightSchedule[]
+  reviews       Review[]
 }
 
 model ProductPhoto {
@@ -119,6 +121,22 @@ model ProductSupplyUsage {
   supplyId  String
   supply    Supply  @relation(fields: [supplyId], references: [id])
   quantity  Float
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId   Int?     // pedido que comprova a compra, guardado para auditoria
+  rating    Int      // 1 a 5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, userId]) // uma avaliação por cliente por peça, editável
+  @@index([productId])
 }
 
 model Favorite {
