@@ -102,7 +102,7 @@ export default async function PedidoDetalhePage({ params }: { params: { id: stri
         {pedido.status === 'cancelado' ? <p style={{ color: 'var(--acento)', fontSize: 13, marginTop: 12 }}>Pedido cancelado{pedido.canceledAt ? ` em ${dataHora(pedido.canceledAt)}` : ''}.</p> : null}
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '1.3fr .7fr', alignItems: 'start' }}>
+      <div className="adm-grid-2" style={{ ['--adm-cols' as string]: '1.3fr .7fr', alignItems: 'start' }}>
         <div style={{ display: 'grid', gap: 18 }}>
           {/* itens */}
           <div className="adm-card adm-card-pad">

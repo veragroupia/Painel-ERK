@@ -43,7 +43,49 @@ export function InsumosLista({ insumos, historico, periodo }: { insumos: Insumo[
         {insumos.length === 0 ? (
           <AdminEmptyState icon="adm_insumos" title="Nenhum insumo cadastrado ainda." action={<p style={{ fontSize: 13.5 }}>Comece pelo que você mais gasta: a massa de polir.</p>} />
         ) : (
-          <div className="adm-table-wrap">
+          <>
+          {/* No celular a tabela vira cartão empilhado. Seis colunas em 358px
+              obrigavam a rolar de lado dentro do quadro, e ao rolar some o nome
+              do insumo — justo a coluna que diz de quem é a linha. */}
+          <div className="adm-rowcards chrome-mobile">
+            {insumos.map((i) => {
+              const acabando = i.estoque <= i.minimo;
+              const pct = i.minimo > 0 ? Math.min(100, (i.estoque / (i.minimo * 3)) * 100) : 100;
+              return (
+                <article key={i.id} className="adm-rowcard adm-insumo">
+                  <header>
+                    <b style={{ color: acabando ? 'var(--acento)' : undefined }}>{i.nome}</b>
+                    {acabando ? <span className="adm-insumo__alerta">acabando</span> : null}
+                    <em>{TIPOS.find((t) => t.id === i.tipo)?.nome || i.tipo}</em>
+                  </header>
+
+                  <dl className="adm-kv">
+                    <dt>Em estoque</dt>
+                    <dd style={{ color: acabando ? 'var(--acento)' : undefined }}>
+                      {i.estoque} {i.unidade}
+                    </dd>
+                    <dt>Custo por unidade</dt>
+                    <dd>{fmt(i.custoUnit)}</dd>
+                  </dl>
+
+                  <span className="adm-meter" style={{ marginTop: 0 }}>
+                    <span style={{ width: pct + '%', background: acabando ? 'var(--acento)' : 'var(--ok)' }} />
+                  </span>
+
+                  <footer>
+                    <button type="button" className="erk-btn erk-btn--s erk-btn--sm" onClick={() => setCompraDe(i)}>
+                      Comprei
+                    </button>
+                    <button type="button" className="erk-btn erk-btn--s erk-btn--sm" onClick={() => setConsumoDe(i)}>
+                      Usei
+                    </button>
+                  </footer>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="adm-table-wrap chrome-desktop">
             <table className="adm-table" style={{ minWidth: 700 }}>
               <thead>
                 <tr>
@@ -86,6 +128,7 @@ export function InsumosLista({ insumos, historico, periodo }: { insumos: Insumo[
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 
