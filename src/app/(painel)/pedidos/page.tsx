@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { fotoUrl } from '@/lib/format';
 import { PedidosLista, type PedidoLinha } from '@/components/admin/PedidosLista';
+import { FiltroSelect } from '@/components/admin/FiltroSelect';
 import { PedidosFiltros } from '@/components/admin/PedidosFiltros';
 
 const PILULAS = [
@@ -91,21 +92,20 @@ export default async function PedidosPage({ searchParams }: { searchParams: { st
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-        {PILULAS.map((p) => {
-          const params = new URLSearchParams();
-          if (p.id !== 'todos') params.set('status', p.id);
-          if (busca) params.set('q', busca);
-          if (periodo !== 'tudo') params.set('periodo', periodo);
-          if (pagamento !== 'todos') params.set('pagamento', pagamento);
-          const qs = params.toString();
-          return (
-            <Link key={p.id} href={`/pedidos${qs ? '?' + qs : ''}`} className={'erk-chip' + (status === p.id ? ' is-on' : '')} style={{ flex: 'none', textDecoration: 'none' }}>
-              {p.nome}
-              <span style={{ marginLeft: 7, opacity: 0.65 }}>{contagem[p.id] ?? 0}</span>
-            </Link>
-          );
-        })}
+      <div className="adm-filtros">
+        <FiltroSelect
+          rotulo="Situação"
+          valor={status}
+          opcoes={PILULAS.map((pl) => {
+            const params = new URLSearchParams();
+            if (pl.id !== 'todos') params.set('status', pl.id);
+            if (busca) params.set('q', busca);
+            if (periodo !== 'tudo') params.set('periodo', periodo);
+            if (pagamento !== 'todos') params.set('pagamento', pagamento);
+            const qs = params.toString();
+            return { valor: pl.id, nome: pl.nome, contagem: contagem[pl.id] ?? 0, href: `/pedidos${qs ? '?' + qs : ''}` };
+          })}
+        />
       </div>
 
       <PedidosFiltros q={busca} periodo={periodo} pagamento={pagamento} status={status} />

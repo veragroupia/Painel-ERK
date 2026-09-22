@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db';
 import { AvaliacoesLista, type AvaliacaoLinha } from '@/components/admin/AvaliacoesLista';
 import { Estrelas } from '@/components/admin/AvaliacoesEstrelas';
+import { FiltroSelect } from '@/components/admin/FiltroSelect';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,15 +67,20 @@ export default async function AvaliacoesPage({ searchParams }: { searchParams: {
         </div>
       </div>
 
-      <div className="adm-tabs">
-        <a className={'adm-tab' + (!temFiltro ? ' is-on' : '')} href="/avaliacoes">
-          Todas {total ? `(${total})` : ''}
-        </a>
-        {([5, 4, 3, 2, 1] as const).map((n) => (
-          <a key={n} className={'adm-tab' + (filtro === n ? ' is-on' : '')} href={`/avaliacoes?nota=${n}`}>
-            {n} estrela{n > 1 ? 's' : ''} ({contagem(n)})
-          </a>
-        ))}
+      <div className="adm-filtros">
+        <FiltroSelect
+          rotulo="Nota"
+          valor={temFiltro ? String(filtro) : 'todas'}
+          opcoes={[
+            { valor: 'todas', nome: 'Todas as notas', contagem: total, href: '/avaliacoes' },
+            ...([5, 4, 3, 2, 1] as const).map((n) => ({
+              valor: String(n),
+              nome: `${n} estrela${n > 1 ? 's' : ''}`,
+              contagem: contagem(n),
+              href: `/avaliacoes?nota=${n}`,
+            })),
+          ]}
+        />
       </div>
 
       <AvaliacoesLista linhas={dados} />

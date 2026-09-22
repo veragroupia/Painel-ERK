@@ -216,8 +216,8 @@ export default async function PedidoDetalhePage({ params }: { params: { id: stri
               <dt>Frete</dt>
               <dd>{pedido.shipping > 0 ? fmt(pedido.shipping) : 'grátis'}</dd>
             </dl>
-            <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-              <p style={{ flex: 1, fontSize: 13, color: 'var(--tinta-2)', lineHeight: 1.5, margin: 0 }}>{enderecoTexto}</p>
+            <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <p style={{ flex: '1 1 160px', minWidth: 0, fontSize: 13, color: 'var(--tinta-2)', lineHeight: 1.5, margin: 0 }}>{enderecoTexto}</p>
               <CopiarBotao texto={enderecoTexto} />
             </div>
             <PedidoOndeEsta orderId={pedido.id} valor={pedido.whereIsIt} />
@@ -247,7 +247,7 @@ export default async function PedidoDetalhePage({ params }: { params: { id: stri
               ) : null}
             </dl>
             <div style={{ borderTop: '1px solid var(--linha)', marginTop: 14, paddingTop: 14 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13.5 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', fontSize: 13.5 }}>
                 <span style={{ color: 'var(--tinta-2)' }}>Sobrou neste pedido</span>
                 <b style={{ color: sobrou >= 0 ? 'var(--ok)' : 'var(--acento)' }}>
                   {fmt(sobrou)} ({sobrouPct.toFixed(1)}%)

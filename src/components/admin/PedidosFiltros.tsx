@@ -22,32 +22,40 @@ export function PedidosFiltros({ q, periodo, pagamento, status }: { q: string; p
   }
 
   return (
-    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          navegar({});
-        }}
-        className="adm-search"
-        style={{ maxWidth: 360, flex: '1 1 240px' }}
-      >
-        <Icon name="busca" size={15} />
-        <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Número, cliente ou telefone" />
-      </form>
+    <div className="adm-filtros">
+      <label className="adm-filtro adm-filtro--busca">
+        <span>Buscar</span>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            navegar({});
+          }}
+          className="adm-search"
+        >
+          <Icon name="busca" size={15} />
+          <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Número, cliente ou telefone" />
+        </form>
+      </label>
 
-      <select className="adm-select adm-select--sm" style={{ width: 'auto' }} value={periodo} onChange={(e) => navegar({ periodo: e.target.value })}>
+      <label className="adm-filtro">
+        <span>Período</span>
+      <select className="adm-select adm-select--sm" value={periodo} onChange={(e) => navegar({ periodo: e.target.value })}>
         <option value="tudo">Todo o período</option>
         <option value="7">Últimos 7 dias</option>
         <option value="30">Últimos 30 dias</option>
         <option value="90">Últimos 90 dias</option>
       </select>
+      </label>
 
-      <select className="adm-select adm-select--sm" style={{ width: 'auto' }} value={pagamento} onChange={(e) => navegar({ pagamento: e.target.value })}>
+      <label className="adm-filtro">
+        <span>Pagamento</span>
+      <select className="adm-select adm-select--sm" value={pagamento} onChange={(e) => navegar({ pagamento: e.target.value })}>
         <option value="todos">Todo pagamento</option>
         <option value="pix">Pix</option>
         <option value="credito">Cartão</option>
         <option value="whats">Combinar no WhatsApp</option>
       </select>
+      </label>
     </div>
   );
 }

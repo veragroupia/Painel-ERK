@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { fotoUrl } from '@/lib/format';
+import { FiltroSelect } from '@/components/admin/FiltroSelect';
 import { PecasGrade, type PecaCard } from '@/components/admin/PecasGrade';
 import { productCostTotal, marginPct } from '@/lib/admin/money';
 
@@ -49,24 +50,34 @@ export default async function PecasPage({ searchParams }: { searchParams: { cate
         </Link>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <Link href="/pecas" className={'erk-chip' + (categoria === 'todas' && situacao === 'todas' ? ' is-on' : '')} style={{ textDecoration: 'none' }}>
-          Todas
-        </Link>
-        {categorias.map((c) => (
-          <Link key={c.id} href={`/pecas?categoria=${c.id}`} className={'erk-chip' + (categoria === c.id ? ' is-on' : '')} style={{ textDecoration: 'none' }}>
-            {c.name}
-          </Link>
-        ))}
-        {[
-          { id: 'published', nome: 'Publicadas' },
-          { id: 'draft', nome: 'Rascunho' },
-          { id: 'soldout', nome: 'Esgotadas' },
-        ].map((s) => (
-          <Link key={s.id} href={`/pecas?situacao=${s.id}`} className={'erk-chip' + (situacao === s.id ? ' is-on' : '')} style={{ textDecoration: 'none' }}>
-            {s.nome}
-          </Link>
-        ))}
+      <div className="adm-filtros">
+        <FiltroSelect
+          rotulo="Categoria"
+          valor={categoria}
+          opcoes={[{ id: 'todas', nome: 'Todas as categorias' }, ...categorias.map((c) => ({ id: c.id, nome: c.name }))].map((c) => {
+            const params = new URLSearchParams();
+            if (c.id !== 'todas') params.set('categoria', c.id);
+            if (situacao !== 'todas') params.set('situacao', situacao);
+            const qs = params.toString();
+            return { valor: c.id, nome: c.nome, href: `/pecas${qs ? '?' + qs : ''}` };
+          })}
+        />
+        <FiltroSelect
+          rotulo="Situação"
+          valor={situacao}
+          opcoes={[
+            { id: 'todas', nome: 'Todas' },
+            { id: 'published', nome: 'Publicadas' },
+            { id: 'draft', nome: 'Rascunho' },
+            { id: 'soldout', nome: 'Esgotadas' },
+          ].map((sit) => {
+            const params = new URLSearchParams();
+            if (categoria !== 'todas') params.set('categoria', categoria);
+            if (sit.id !== 'todas') params.set('situacao', sit.id);
+            const qs = params.toString();
+            return { valor: sit.id, nome: sit.nome, href: `/pecas${qs ? '?' + qs : ''}` };
+          })}
+        />
       </div>
 
       <PecasGrade cards={cards} podeReordenar={categoria === 'todas' && situacao === 'todas'} />
