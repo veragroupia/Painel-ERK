@@ -51,7 +51,7 @@ export function PedidosLista({ linhas }: { linhas: PedidoLinha[] }) {
       <AdminEmptyState
         icon="adm_pedidos"
         title="Nenhum pedido nesse filtro."
-        action={<p style={{ fontSize: 13.5, marginTop: 4 }}>Troque a pílula acima ou limpe a busca para ver todos os pedidos.</p>}
+        action={<p style={{ fontSize: 13.5, marginTop: 4 }}>Mude os filtros acima ou limpe a busca para ver todos os pedidos.</p>}
       />
     );
   }

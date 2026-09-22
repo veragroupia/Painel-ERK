@@ -29,7 +29,22 @@
 .adm-sidebar-foot em { font-style: normal; font-size: 11.5px; color: var(--tinta-3); }
 
 .adm-content { flex: 1; min-width: 0; padding: clamp(16px, 2vw, 32px); display: flex; justify-content: center; }
-.adm-content > div { width: 100%; max-width: 1360px; }
+.adm-content > div { width: 100%; max-width: 1360px; min-width: 0; }
+/* Filho de flex e de grid nasce com min-width: auto, ou seja, se recusa a
+   encolher abaixo do próprio conteúdo. Bastava uma tabela larga ou um gráfico
+   lá dentro para esticar a coluna inteira e criar rolagem lateral na página —
+   era o que acontecia em visão geral, montador, insumos e financeiro. Zerar o
+   mínimo devolve o encolhimento; quem precisa de largura (tabela, gráfico)
+   rola dentro do próprio quadro, sem arrastar a tela junto. */
+.adm-content > div > *,
+.adm-stats > *, .adm-grid-2 > *, .adm-grid-3 > *,
+.adm-rowcards > *, .adm-rowcard > *,
+.adm-card, .adm-card > *, .adm-table-wrap, .adm-timeline { min-width: 0; }
+
+/* Par rótulo/valor: a coluna do valor era `auto` e telefone, CPF ou um total
+   longo a empurravam para fora da tela. Passa a ter teto e a quebrar. */
+.adm-kv dd { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .adm-kv { grid-template-columns: 1fr minmax(0, 1.1fr); } }
 
 .adm-drawer-veil { display: none; }
 .adm-drawer { display: none; }
@@ -105,7 +120,7 @@
 .adm-rowcards { display: grid; gap: 10px; }
 
 /* linha do tempo do pedido */
-.adm-timeline { display: flex; gap: 0; overflow-x: auto; padding: 6px 0 2px; }
+.adm-timeline { display: flex; gap: 0; overflow-x: auto; min-width: 0; padding: 6px 0 2px; }
 .adm-timeline-step { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; min-width: 100px; position: relative; padding: 0 4px; }
 .adm-timeline-step:not(:last-child)::after { content: ""; position: absolute; top: 9px; left: 58%; right: -42%; height: 2px; background: var(--linha-2); }
 .adm-timeline-step.is-done:not(:last-child)::after { background: var(--tinta-2); }
@@ -195,4 +210,32 @@
   .adm-aval__topo time { margin-left: 0; flex-basis: 100%; }
   .adm-aval__acoes { justify-content: stretch; }
   .adm-aval__acoes > button { width: 100%; }
+}
+
+/* ---------------- filtros em select ---------------- */
+/* Fila de filtros que quebra linha em vez de rolar de lado: no celular cada
+   select ocupa a largura toda, no desktop ficam lado a lado. */
+.adm-filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.adm-filtro { display: grid; gap: 5px; flex: 1 1 190px; min-width: 0; }
+.adm-filtro > span { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-3); }
+.adm-filtro select { width: 100%; }
+@media (min-width: 761px) { .adm-filtro { flex: 0 1 230px; } }
+.adm-filtro--busca { flex: 1 1 240px; }
+@media (min-width: 761px) { .adm-filtro--busca { flex: 1 1 260px; max-width: 360px; } }
+.adm-filtro .adm-search { width: 100%; }
+
+/* ---------------- linha do tempo no celular ---------------- */
+/* Sete passos de 100px não cabem em 390px. Em vez de rolar de lado — que
+   esconde metade do andamento e é o que o dono mais quer ver de relance —
+   a linha vira vertical, com o fio ligando os pontos de cima a baixo. */
+@media (max-width: 760px) {
+  .adm-timeline { flex-direction: column; overflow: visible; padding: 4px 0 0; }
+  .adm-timeline-step { flex-direction: row; align-items: flex-start; gap: 11px; min-width: 0; width: 100%; padding: 0 0 16px; }
+  .adm-timeline-step:not(:last-child)::after { top: 20px; bottom: -2px; left: 8px; right: auto; width: 2px; height: auto; }
+  .adm-timeline-step > span:not(.adm-timeline-dot) { text-align: left; }
+  .adm-timeline-label { font-size: 13px; }
+  .adm-timeline-time { font-size: 11.5px; }
+  /* rótulo e horário ficam lado a lado do ponto, em coluna própria */
+  .adm-timeline-step { display: grid; grid-template-columns: 18px 1fr; align-items: start; gap: 4px 11px; }
+  .adm-timeline-dot { grid-row: 1 / span 3; }
 }
