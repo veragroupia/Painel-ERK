@@ -112,7 +112,7 @@ export default async function FinanceiroPage({ searchParams }: { searchParams: {
         </div>
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '1fr 1fr', alignItems: 'start' }}>
+      <div className="adm-grid-2" style={{ alignItems: 'start' }}>
         <div className="adm-profit-card">
           <div className="adm-stat__label">Lucro do mês</div>
           <div className="adm-profit-value" style={lucro < 0 ? { color: 'var(--acento)' } : undefined}>

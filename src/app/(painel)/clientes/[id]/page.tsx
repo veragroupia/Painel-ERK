@@ -45,7 +45,7 @@ export default async function ClienteDetalhePage({ params }: { params: { id: str
         ) : null}
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '.8fr 1.2fr', alignItems: 'start' }}>
+      <div className="adm-grid-2" style={{ ['--adm-cols' as string]: '.8fr 1.2fr', alignItems: 'start' }}>
         <div style={{ display: 'grid', gap: 18 }}>
           <div className="adm-card adm-card-pad">
             <div className="adm-stat__label" style={{ marginBottom: 12 }}>

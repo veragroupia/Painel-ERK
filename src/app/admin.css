@@ -118,6 +118,11 @@
 /* cartões de linha (celular) */
 .adm-rowcard { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 16px; display: grid; gap: 8px; }
 .adm-rowcards { display: grid; gap: 10px; }
+/* .adm-rowcards declara display e, como admin.css entra depois de globals.css,
+   vencia o display: none de .chrome-mobile — os cartões de celular apareciam
+   também no desktop, duplicando a tabela logo acima. */
+.adm-rowcards.chrome-mobile { display: none; }
+@media (max-width: 899px) { .adm-rowcards.chrome-mobile { display: grid; } }
 
 /* linha do tempo do pedido */
 .adm-timeline { display: flex; gap: 0; overflow-x: auto; min-width: 0; padding: 6px 0 2px; }
@@ -161,8 +166,13 @@
 /* grades */
 .adm-card { background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 14px; box-shadow: 0 16px 38px rgba(0, 0, 0, .5); }
 .adm-card-pad { padding: 20px clamp(16px, 2vw, 24px); }
-.adm-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.adm-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+/* A proporção das colunas vem de uma variável, não de estilo embutido: estilo
+   embutido vence media query, então toda tela que escrevia gridTemplateColumns
+   direto no elemento nunca colapsava no celular — as duas colunas ficavam
+   espremidas lado a lado e o conteúdo vazava do cartão. Definindo apenas a
+   variável, a regra de telefone abaixo volta a mandar. */
+.adm-grid-2 { display: grid; grid-template-columns: var(--adm-cols, 1fr 1fr); gap: 16px; }
+.adm-grid-3 { display: grid; grid-template-columns: var(--adm-cols, repeat(3, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .adm-grid-2, .adm-grid-3 { grid-template-columns: 1fr; } }
 .adm-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); gap: 16px; }
 @media (max-width: 560px) { .adm-cards { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
@@ -239,3 +249,13 @@
   .adm-timeline-step { display: grid; grid-template-columns: 18px 1fr; align-items: start; gap: 4px 11px; }
   .adm-timeline-dot { grid-row: 1 / span 3; }
 }
+
+/* ---------------- insumo em cartão (celular) ---------------- */
+.adm-insumo { gap: 12px; }
+.adm-insumo header { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 9px; }
+.adm-insumo header b { font-size: 15px; font-weight: 600; }
+.adm-insumo header em { font-style: normal; font-size: 12px; color: var(--tinta-3); flex-basis: 100%; }
+.adm-insumo__alerta { font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--acento); border: 1px solid var(--acento); border-radius: 5px; padding: 2px 6px; }
+.adm-insumo .adm-kv { gap: 6px 12px; }
+.adm-insumo footer { display: flex; gap: 8px; }
+.adm-insumo footer .erk-btn { flex: 1; }

@@ -159,7 +159,7 @@ export default async function VisaoGeralPage() {
         ))}
       </div>
 
-      <div className="adm-grid-2" style={{ gridTemplateColumns: '1.15fr .85fr', alignItems: 'stretch' }}>
+      <div className="adm-grid-2" style={{ ['--adm-cols' as string]: '1.15fr .85fr', alignItems: 'stretch' }}>
         <div className="adm-profit-card">
           <div className="adm-stat__label">Lucro do mês</div>
           <div className="adm-profit-value" style={mesAtual.lucro < 0 ? { color: 'var(--acento)' } : undefined}>
