@@ -96,9 +96,12 @@ function statusEventsFor(finalStatus: string, readyFromStock: boolean, endAt: Da
 
 async function seedCategoriesAndProducts() {
   for (const c of CATS) {
+    // update vazio pelo mesmo motivo do catálogo abaixo: o seed roda a cada
+    // boot, e preencher o update faria a categoria renomeada pelo dono voltar
+    // ao nome de fábrica no próximo deploy.
     await prisma.category.upsert({
       where: { id: c.id },
-      update: { name: c.nome, iconName: c.icone, photoId: c.fid },
+      update: {},
       create: { id: c.id, name: c.nome, iconName: c.icone, photoId: c.fid },
     });
   }
@@ -480,7 +483,9 @@ async function seedVitrine() {
     }
   }
 
-  for (const s of VITRINE_SECTIONS) await prisma.vitrineSection.upsert({ where: { id: s.id }, update: { order: s.order }, create: { id: s.id, order: s.order } });
+  // idem: a ordem da vitrine é do dono, e reescrevê-la no update desfazia o
+  // arrasta-e-solta da tela de Vitrine a cada restart do serviço.
+  for (const s of VITRINE_SECTIONS) await prisma.vitrineSection.upsert({ where: { id: s.id }, update: {}, create: { id: s.id, order: s.order } });
 
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
